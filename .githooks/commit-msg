@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+
+import sys
+import re
+import subprocess
+
+bugfixes_re = r"bugfixes/"
+features_re = r"features/"
+commit_message_re = r"^#\d*\s"
+protected_branch = ["development", "develop", "master", "main", "releases"]
+
+
+def warning_handler(text: str):
+    return "Warning: " + text
+
+
+def error_handler(text: str):
+    return "Error: " + text
+
+
+def validate_branch_convention(logs: list[str], handler) -> list[str]:
+    branch: str = str(subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=subprocess.PIPE).stdout)
+    if not re.search(bugfixes_re, branch) and not re.search(features_re, branch):
+        logs.append(handler("""The name of the branch does not respect the current convention, the branch name must 
+       start with 'bugfixes/' or 'features/'."""))
+
+    return logs
+
+
+def validate_branch(logs: list[str], protected_branch_list: list[str], handler) -> list[str]:
+    branch: str = str(subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=subprocess.PIPE).stdout)
+    for branch_name in protected_branch_list:
+        if branch_name in branch.lower():
+            logs.append(handler(f"You are trying to commit on the {branch_name} branch."))
+    return logs
+
+
+def validate_commit_message(logs: list[str], handler) -> list[str]:
+    commit_args = sys.argv
+
+    with open(commit_args[1], "r") as fp:
+        message: str = fp.readline()
+
+        if not re.search(commit_message_re, message):
+            logs.append(
+                handler(
+                    "The commit message is incorrect. The commit message format should be '#ticketnumber message'."
+                )
+            )
+    return logs
+
+
+def main():
+    errors: list[str] = validate_branch_convention(validate_branch([], protected_branch, error_handler), error_handler)
+    warnings: list[str] = validate_commit_message([], warning_handler)
+
+    if warnings:
+        for warning in warnings:
+            print(warning)
+
+    if errors:
+        for error in errors:
+            print(error)
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+
+    main()
