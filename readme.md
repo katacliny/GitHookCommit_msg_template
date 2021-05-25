@@ -10,7 +10,7 @@ Copy the .githooks folder in your git repo and falow the intruction in the readm
 
 ## Usage
 
-Just try to make a invalid commit and you will se and ouput like this 
+Just try to make a invalid commit and you will see and ouput like this 
 
 ![image](https://user-images.githubusercontent.com/34369026/119501317-0ea76800-bd69-11eb-83e7-cc0055d6bd05.png)
 
