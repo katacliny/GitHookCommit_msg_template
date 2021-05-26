@@ -18,7 +18,6 @@ Pull requests are welcome!
 
 # Install and use 
 
-Copy the .githooks folder in your git repo.
 Run this command 'git config core.hooksPath .githooks' to add the hooks to your repo
 
 ## Dependencies
@@ -39,6 +38,6 @@ choco install ruby
 
 gem install scss_lint
 
-# colorama
+# for colorama
 
 python -m pip install colorama
