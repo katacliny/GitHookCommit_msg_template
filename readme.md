@@ -18,7 +18,7 @@ Pull requests are welcome!
 
 # Install and use 
 
-Run this command 'git config core.hooksPath .githooks' to add the hooks to your repo
+Run this command 'git config core.hooksPath .githooks' inside your repo to add the hooks to your repo
 
 ## Dependencies
 
