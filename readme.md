@@ -21,21 +21,21 @@ Pull requests are welcome!
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
-#Install and use 
+# Install and use 
 
 Run this command 'git config core.hooksPath .githooks' to add the hooks to your repo
 
-##Dependencies
+## Dependencies
 
-#command for Chocolatey  https://chocolatey.org/install
+# command for Chocolatey  https://chocolatey.org/install
 
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-#for python3 
+# for python3 
 
 choco install python --version=3.8.0
 
-#for ruby
+# for ruby
 
 choco install ruby
 
