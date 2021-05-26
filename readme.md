@@ -3,11 +3,6 @@
 
 This is a Python githook for dealing with branch strategy and common git mistakes.
 
-## Installation
-
-Copy the .githooks folder in your git repo and falow the intruction in the readme file inside that folder.
-
-
 ## Usage
 
 Just try to make a invalid commit and you will see and output like this 
@@ -23,6 +18,7 @@ Pull requests are welcome!
 
 # Install and use 
 
+Copy the .githooks folder in your git repo.
 Run this command 'git config core.hooksPath .githooks' to add the hooks to your repo
 
 ## Dependencies
