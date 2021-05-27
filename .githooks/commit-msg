@@ -22,44 +22,78 @@ def error_handler(text: str):
     return Fore.RED + "Error: " + text
 
 
-def validate_sass(logs: list[str], handler_error=None, handler_warning=None) -> list[str]:
-    files_raw: str = subprocess.check_output("git diff --name-only --cached", shell=True).decode("utf-8")
+def validate_sass(
+    logs: list[str], handler_error=None, handler_warning=None
+) -> list[str]:
+    files_raw: str = subprocess.check_output(
+        "git diff --name-only --cached", shell=True
+    ).decode("utf-8")
     files: list[str] = files_raw.split("\n")
     cwd: str = os.getcwd()
 
     for file in files:
         if re.search(".scss", file):
             path = os.path.join(cwd, file)
-            messages: list[str] = subprocess.run(["scss-lint", path], shell=True, stdout=subprocess.PIPE).stdout
+            messages: list[str] = subprocess.run(
+                ["scss-lint", path], shell=True, stdout=subprocess.PIPE
+            ).stdout
             for message in messages.decode("utf-8").split("\n"):
                 if re.search(r"\[E\]", message) and handler_error:
                     error_message = message.split("[E]")[1]
                     line = re.search(r":\d", message.split("[E]")[0])
-                    logs.append(handler_error(f"in file {file} {line.group(0)}-> {error_message}"))
+                    logs.append(
+                        handler_error(
+                            f"in file {file} {line.group(0)}-> {error_message}"
+                        )
+                    )
 
                 if re.search(r"\[W\]", message) and handler_warning:
                     error_message = message.split("[W]")[1]
                     line = re.search(r":\d", message.split("[W]")[0])
-                    logs.append(handler_warning(f"in file {file} {line.group(0)}-> {error_message}"))
+                    logs.append(
+                        handler_warning(
+                            f"in file {file} {line.group(0)}-> {error_message}"
+                        )
+                    )
 
     return logs
 
 
 def validate_branch_convention(logs: list[str], handler) -> list[str]:
-    branch: str = str(subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=subprocess.PIPE).stdout)
-    if not re.search(bugfixes_re, branch) and not re.search(features_re, branch) \
-            and not re.search(hotfixes_re, branch) and not re.search(hotfix_re, branch):
-        logs.append(handler("""The name of the branch does not respect the current convention, the branch name must 
-       start with 'bugfixes/', 'features/', 'hotfixes/' or 'hotfix/'."""))
+    branch: str = str(
+        subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=subprocess.PIPE
+        ).stdout
+    )
+    if (
+        not re.search(bugfixes_re, branch)
+        and not re.search(features_re, branch)
+        and not re.search(hotfixes_re, branch)
+        and not re.search(hotfix_re, branch)
+    ):
+        logs.append(
+            handler(
+                """The name of the branch does not respect the current convention, the branch name must 
+       start with 'bugfixes/', 'features/', 'hotfixes/' or 'hotfix/'."""
+            )
+        )
 
     return logs
 
 
-def validate_branch(logs: list[str], protected_branch_list: list[str], handler) -> list[str]:
-    branch: str = str(subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=subprocess.PIPE).stdout)
+def validate_branch(
+    logs: list[str], protected_branch_list: list[str], handler
+) -> list[str]:
+    branch: str = str(
+        subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=subprocess.PIPE
+        ).stdout
+    )
     for branch_name in protected_branch_list:
         if branch_name in branch.lower():
-            logs.append(handler(f"You are trying to commit on the {branch_name} branch."))
+            logs.append(
+                handler(f"You are trying to commit on the {branch_name} branch.")
+            )
     return logs
 
 
@@ -79,9 +113,15 @@ def validate_commit_message(logs: list[str], handler) -> list[str]:
 
 
 def main():
-    errors: list[str] = validate_sass(validate_branch_convention(validate_branch([], protected_branch, error_handler),
-                                                                 error_handler), handler_error=error_handler)
-    warnings: list[str] = validate_sass(validate_commit_message([], warning_handler), handler_warning=warning_handler)
+    errors: list[str] = validate_sass(
+        validate_branch_convention(
+            validate_branch([], protected_branch, error_handler), error_handler
+        ),
+        handler_error=error_handler,
+    )
+    warnings: list[str] = validate_sass(
+        validate_commit_message([], warning_handler), handler_warning=warning_handler
+    )
 
     if warnings:
         for warning in warnings:
