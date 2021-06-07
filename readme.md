@@ -3,12 +3,6 @@
 
 This is a Python githook for dealing with branch strategy and common git mistakes.
 
-## Usage
-
-Just try to make a invalid commit and you will see and output like this 
-
-![image](https://user-images.githubusercontent.com/34369026/119679469-aaf06e00-be40-11eb-840a-f541e4e89cd8.png)
-
 
 ## Contributing
 Pull requests are welcome!
